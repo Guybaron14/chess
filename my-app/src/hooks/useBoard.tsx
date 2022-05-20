@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { convertTileToNumber, tileNumToRowCol } from '../utils/utils';
+import axios from 'axios';
 
 export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
     const [board, setBoard] = useState<Array<Array<string>>>([
@@ -14,7 +15,17 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
     ]);
     const [currPiece, setCurrPiece] = useState<string>('');
     const [currTurn, setCurrTurn] = useState<string>('w');
-    const boardLegalMoves = { b2: ['b3', 'b4'], b7: ['b6', 'b5'] };
+    const [boardLegalMoves, setBoardLegalMoves] = useState<Array<string>>([]);
+
+    useEffect(() => {
+        const fetchBoard = async () => {
+            setBoardLegalMoves(
+                (await axios.post(`http://localhost:8080/api/${currTurn}-KQkq--0`, { board: board })).data,
+            );
+        };
+
+        fetchBoard();
+    }, [board, currTurn]);
 
     const checkIfCurrTurn = (pieceString: string) => {
         if (currTurn === 'w') {
@@ -28,8 +39,8 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
         const tempBoard = [...board];
         for (let i = 0; i < tempBoard.length; i++) {
             for (let j = 0; j < tempBoard[i].length; j++) {
-                if (tempBoard[i][j] === '#') {
-                    tempBoard[i][j] = '0';
+                if (tempBoard[i][j].includes('#')) {
+                    tempBoard[i][j] = tempBoard[i][j].replace('#', '');
                 }
             }
         }
@@ -43,7 +54,7 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
         const selectedPiece = tempBoard[row][col];
         clearTargets();
 
-        if (selectedPiece === '#') {
+        if (selectedPiece.includes('#')) {
             makeMove(currPiece, tile);
             setCurrPiece('');
             setCurrTurn(currTurn === 'w' ? 'b' : 'w');
@@ -60,7 +71,7 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
             if (convertTileToNumber(pieceInLegalMoves) === Number(tile) && checkIfCurrTurn(selectedPiece)) {
                 for (const move of legalMoves) {
                     const moveTile = convertTileToNumber(move);
-                    tempBoard[Math.floor(moveTile / 8)][moveTile % 8] = '#';
+                    tempBoard[Math.floor(moveTile / 8)][moveTile % 8] += '#';
                 }
             }
         }

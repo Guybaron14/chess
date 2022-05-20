@@ -1,11 +1,12 @@
+import { main } from './chess/main';
 import { Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { ServerError } from './error';
 
 const appRouter = Router();
 
-appRouter.get('/api/features', (_req, res) => {
-    res.send(['Feature 1', 'Feature 2']);
+appRouter.post('/api/:gameString', (req, res) => {
+    res.send(main(req.body.board, req.params.gameString));
 });
 
 appRouter.use('/isAlive', (_req, res) => {

@@ -48,7 +48,7 @@ const Board: React.FC<{}> = () => {
 
             if (twoDBoard[i][j] === '0') {
                 board.push(<Tile color={color} key={board.length} index={board.length} handleClick={pieceSelected} />);
-            } else if (twoDBoard[i][j] === '#') {
+            } else if (twoDBoard[i][j].includes('#')) {
                 board.push(<Tile color="move" key={board.length} index={board.length} handleClick={pieceSelected} />);
             } else {
                 board.push(

@@ -3,7 +3,6 @@ import { once } from 'events';
 import * as express from 'express';
 import helmet from 'helmet';
 import * as http from 'http';
-import config from '../config';
 import { loggerMiddleware, setStartTime } from '../utils/express/logger';
 import { errorMiddleware } from './error';
 import appRouter from './router';
@@ -25,9 +24,7 @@ class Server {
 
         app.use(setStartTime);
 
-        if (config.service.useCors) {
-            app.use(cors());
-        }
+        app.use(cors());
 
         app.use(helmet());
         app.use(express.json());
