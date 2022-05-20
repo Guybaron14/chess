@@ -14,7 +14,7 @@
   background-color: rgb(118,150,86);
 }
 
-img {
-  width: 70px;
-  height: 70px;
+.move {
+  background-color: rgba(193, 65, 65, 0.2);
 }
+

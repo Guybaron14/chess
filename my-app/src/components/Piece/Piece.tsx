@@ -1,12 +1,12 @@
 import React from "react";
-import Draggable from "react-draggable";
+import "./Piece.css";
 
 type props = {
   piece: string;
 };
 
 const Piece: React.FC<props> = (props) => {
-  return <Draggable><img alt="" src={props.piece} /></Draggable>;
+  return <img alt="" src={props.piece} />;
 };
 
 export default Piece;
