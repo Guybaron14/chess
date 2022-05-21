@@ -49,7 +49,16 @@ const Board: React.FC<{}> = () => {
             if (twoDBoard[i][j] === '0') {
                 board.push(<Tile color={color} key={board.length} index={board.length} handleClick={pieceSelected} />);
             } else if (twoDBoard[i][j].includes('#')) {
-                board.push(<Tile color="move" key={board.length} index={board.length} handleClick={pieceSelected} />);
+                board.push(
+                    <Tile
+                        color={color}
+                        piece={dictOfPieces[twoDBoard[i][j].charAt(0) as keyof typeof dictOfPieces]}
+                        key={board.length}
+                        index={board.length}
+                        handleClick={pieceSelected}
+                        targetTile={true}
+                    />,
+                );
             } else {
                 board.push(
                     <Tile

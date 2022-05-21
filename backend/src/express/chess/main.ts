@@ -3,6 +3,8 @@ import { getBishopMoves } from './bishop';
 import { getPawnMoves } from './pawn';
 import { getRookMoves } from './rook';
 import { tileNumberToString } from './utils';
+import { getKnightMoves } from './knight';
+import { getKingMoves } from './king';
 
 export const main = (board, gameString) => {
     const [turn, _casteling, _enPassant, _moveCounter] = gameString.split('-');
@@ -27,6 +29,16 @@ export const main = (board, gameString) => {
 
             if (board[i][j] === 'Q' || board[i][j] === 'q') {
                 const possibleMoves = getQueenMoves(board, i, j, turn === 'w' ? 'w' : 'b');
+                legalMoves[tileNumberToString(i, j)] = possibleMoves;
+            }
+
+            if (board[i][j] === 'N' || board[i][j] === 'n') {
+                const possibleMoves = getKnightMoves(board, i, j, turn === 'w' ? 'w' : 'b');
+                legalMoves[tileNumberToString(i, j)] = possibleMoves;
+            }
+
+            if (board[i][j] === 'K' || board[i][j] === 'k') {
+                const possibleMoves = getKingMoves(board, i, j, turn === 'w' ? 'w' : 'b');
                 legalMoves[tileNumberToString(i, j)] = possibleMoves;
             }
         }
