@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { convertTileToNumber, tileNumToRowCol } from '../utils/utils';
 import axios from 'axios';
+import { checkCastling, markCastling, returnFromBackend } from '../utils/castling';
 
 export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
     const [board, setBoard] = useState<Array<Array<string>>>([
@@ -15,12 +16,14 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
     ]);
     const [currPiece, setCurrPiece] = useState<string>('');
     const [currTurn, setCurrTurn] = useState<string>('w');
-    const [boardLegalMoves, setBoardLegalMoves] = useState<Array<string>>([]);
+    const [castlingOptions, setCastlingOptions] = useState<string>('KQkq');
+    const [boardLegalMoves, setBoardLegalMoves] = useState<returnFromBackend>({});
 
     useEffect(() => {
         const fetchBoard = async () => {
             setBoardLegalMoves(
-                (await axios.post(`http://localhost:8080/api/${currTurn}-KQkq--0`, { board: board })).data,
+                (await axios.post(`http://localhost:8080/api/${currTurn}-${castlingOptions}--0`, { board: board }))
+                    .data,
             );
         };
 
@@ -55,7 +58,18 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
         clearTargets();
 
         if (selectedPiece.includes('#')) {
-            makeMove(currPiece, tile);
+            const { newBoard, newCastlingOptions, isCastlingDone } = checkCastling(
+                board,
+                tile,
+                currPiece,
+                castlingOptions,
+            );
+            setBoard(newBoard);
+            setCastlingOptions(newCastlingOptions);
+
+            if (!isCastlingDone) {
+                makeMove(currPiece, tile);
+            }
             setCurrPiece('');
             setCurrTurn(currTurn === 'w' ? 'b' : 'w');
             return;
@@ -68,7 +82,8 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
 
         setCurrPiece(tile);
         for (const [pieceInLegalMoves, legalMoves] of Object.entries(boardLegalMoves)) {
-            if (convertTileToNumber(pieceInLegalMoves) === Number(tile) && checkIfCurrTurn(selectedPiece)) {
+            if (convertTileToNumber(pieceInLegalMoves) === Number(tile)) {
+                setBoard(markCastling(board, tile, boardLegalMoves));
                 for (const move of legalMoves) {
                     const moveTile = convertTileToNumber(move);
                     tempBoard[Math.floor(moveTile / 8)][moveTile % 8] += '#';

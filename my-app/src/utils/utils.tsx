@@ -1,5 +1,3 @@
-import Tile from "../components/Tile/Tile";
-
 export const tileNumToRowCol = (tileNum: string): [number, number] => {
     const row = Math.floor(Number(tileNum) / 8);
     const col = Number(tileNum) % 8;

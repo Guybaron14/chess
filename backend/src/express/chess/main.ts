@@ -5,10 +5,12 @@ import { getRookMoves } from './rook';
 import { tileNumberToString } from './utils';
 import { getKnightMoves } from './knight';
 import { getKingMoves } from './king';
+import { getCastlingMoves } from './castling';
 
 export const main = (board, gameString) => {
-    const [turn, _casteling, _enPassant, _moveCounter] = gameString.split('-');
+    const [turn, casteling, _enPassant, _moveCounter] = gameString.split('-');
     const legalMoves = {};
+    legalMoves['castling'] = getCastlingMoves(board, casteling, turn);
 
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
