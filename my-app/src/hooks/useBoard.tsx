@@ -36,6 +36,16 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
         fetchBoard();
     }, [board, currTurn]);
 
+    useEffect(() => {
+        // if (Object.keys(boardLegalMoves).length === 0) {
+        //     if (currTurn === 'w') {
+        //          alert('Black Wins!');
+        //     } else {
+        //          alert('White Wins!');
+        //     }
+        // }
+    }, [boardLegalMoves]);
+
     const checkIfCurrTurn = (pieceString: string) => {
         if (currTurn === 'w') {
             return pieceString.charAt(0) === pieceString.charAt(0).toUpperCase();
@@ -136,7 +146,11 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
         const [tileRow, tileCol] = tileNumToRowCol(tile);
         const [targetRow, targetCol] = tileNumToRowCol(target);
 
-        if (Math.abs(tileCol - targetCol) === 1 && board[targetRow][targetCol] === '0') {
+        if (
+            Math.abs(tileCol - targetCol) === 1 &&
+            board[targetRow][targetCol] === '0' &&
+            (board[tileRow][tileCol] === 'p' || board[targetRow][targetCol] === 'P')
+        ) {
             board[targetRow][targetCol] = board[tileRow][tileCol];
             board[tileRow][tileCol] = '0';
             if (targetRow === 2) {
