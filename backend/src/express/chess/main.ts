@@ -81,11 +81,9 @@ export const main = (board, gameString) => {
 
     for (let key in legalMoves) {
         for (let i = 0; i < legalMoves[key].length; i++) {
-            if (key !== 'castling') {
-                if (checkCheck(board, key, legalMoves[key][i], turn)) {
-                    legalMoves[key].splice(i, 1);
-                    i--;
-                }
+            if (checkCheck(board, key, legalMoves[key][i], turn)) {
+                legalMoves[key].splice(i, 1);
+                i--;
             }
         }
     }
