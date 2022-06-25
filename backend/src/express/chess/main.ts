@@ -9,15 +9,17 @@ import { getKingMoves } from './king';
 import { getCastlingMoves } from './castling';
 
 export const main = (board, gameString) => {
-    const [turn, casteling, _enPassant, _moveCounter] = gameString.split('-');
+    const [turn, casteling, enPassant, _moveCounter] = gameString.split('-');
     const legalMoves = {};
     legalMoves['castling'] = getCastlingMoves(board, casteling, turn);
+    console.log(enPassant);
+    
 
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
             if (turn === 'w') {
                 if (board[i][j] === 'P') {
-                    const possibleMoves = getPawnMoves(board, i, j, turn);
+                    const possibleMoves = getPawnMoves(board, i, j, turn, enPassant);
                     legalMoves[tileNumberToString(i, j)] = possibleMoves;
                 }
 
@@ -47,7 +49,7 @@ export const main = (board, gameString) => {
                 }
             } else {
                 if (board[i][j] === 'p') {
-                    const possibleMoves = getPawnMoves(board, i, j, turn);
+                    const possibleMoves = getPawnMoves(board, i, j, turn, enPassant);
                     legalMoves[tileNumberToString(i, j)] = possibleMoves;
                 }
 

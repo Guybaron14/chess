@@ -24,7 +24,7 @@ const canCaptureKing = (board, turn) => {
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
             if (turn === 'w') {
-                if (board[i][j] === 'p' && getPawnMoves(board, i, j, 'b').includes(kingPos)) {
+                if (board[i][j] === 'p' && getPawnMoves(board, i, j, 'b', '').includes(kingPos)) {
                     flag = true;
                 }
                 if (board[i][j] === 'n' && getKnightMoves(board, i, j, 'b').includes(kingPos)) {
@@ -40,7 +40,7 @@ const canCaptureKing = (board, turn) => {
                     flag = true;
                 }
             } else {
-                if (board[i][j] === 'P' && getPawnMoves(board, i, j, 'w').includes(kingPos)) {
+                if (board[i][j] === 'P' && getPawnMoves(board, i, j, 'w', '').includes(kingPos)) {
                     flag = true;
                 }
                 if (board[i][j] === 'N' && getKnightMoves(board, i, j, 'w').includes(kingPos)) {

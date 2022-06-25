@@ -8,3 +8,7 @@ export const convertTileToNumber = (tile: string) => {
     let [col, row] = tile.split('');
     return 64 - (8 - (col.charCodeAt(0) - 97)) - (Number(row) - 1) * 8;
 };
+
+export const tileNumberToString = (row: number, col: number): string => {
+    return `${String.fromCharCode(col + 97)}${8 - row}`;
+};

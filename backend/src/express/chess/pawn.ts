@@ -1,6 +1,12 @@
-import { isCapturePossible, tileNumberToString } from './utils';
+import { isCapturePossible, tileNumberToString, convertTileToNumber } from './utils';
 
-export const getPawnMoves = (board: Array<Array<string>>, row: number, col: number, turn: string): Array<string> => {
+export const getPawnMoves = (
+    board: Array<Array<string>>,
+    row: number,
+    col: number,
+    turn: string,
+    enPassant: string,
+): Array<string> => {
     const legalMoves: Array<string> = [];
     if (turn === 'w') {
         if (/^[A-Z]+$/.test(board[row][col])) {
@@ -18,6 +24,13 @@ export const getPawnMoves = (board: Array<Array<string>>, row: number, col: numb
             if (col < 7 && isCapturePossible(board, row - 1, col + 1, 'w')) {
                 legalMoves.push(tileNumberToString(row - 1, col + 1));
             }
+            if (enPassant !== '') {
+                const enPassantRow = Math.floor(convertTileToNumber(enPassant) / 8);
+                const enPassantCol = convertTileToNumber(enPassant) % 8;
+                if (row - 1 === enPassantRow && Math.abs(col - enPassantCol) === 1) {
+                    legalMoves.push(enPassant);
+                }
+            }
         }
     } else {
         if (/^[a-z]+$/.test(board[row][col])) {
@@ -34,6 +47,13 @@ export const getPawnMoves = (board: Array<Array<string>>, row: number, col: numb
             }
             if (col < 7 && isCapturePossible(board, row + 1, col + 1, 'b')) {
                 legalMoves.push(tileNumberToString(row + 1, col + 1));
+            }
+            if (enPassant !== '') {
+                const enPassantRow = Math.floor(convertTileToNumber(enPassant) / 8);
+                const enPassantCol = convertTileToNumber(enPassant) % 8;
+                if (row + 1 === enPassantRow && Math.abs(col - enPassantCol) === 1) {
+                    legalMoves.push(enPassant);
+                }
             }
         }
     }
