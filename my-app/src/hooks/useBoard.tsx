@@ -21,10 +21,12 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
 
     useEffect(() => {
         const fetchBoard = async () => {
-            setBoardLegalMoves(
-                (await axios.post(`http://localhost:8080/api/${currTurn}-${castlingOptions}--0`, { board: board }))
-                    .data,
-            );
+            if (!board.some((row: any[]) => row.some((tile: string) => tile.includes('#')))) {
+                setBoardLegalMoves(
+                    (await axios.post(`http://localhost:8080/api/${currTurn}-${castlingOptions}--0`, { board: board }))
+                        .data,
+                );
+            }
         };
 
         fetchBoard();
