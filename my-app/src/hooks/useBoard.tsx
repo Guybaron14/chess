@@ -149,10 +149,11 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
         if (
             Math.abs(tileCol - targetCol) === 1 &&
             board[targetRow][targetCol] === '0' &&
-            (board[tileRow][tileCol] === 'p' || board[targetRow][targetCol] === 'P')
+            (board[tileRow][tileCol] === 'p' || board[tileRow][tileCol] === 'P')
         ) {
             board[targetRow][targetCol] = board[tileRow][tileCol];
             board[tileRow][tileCol] = '0';
+
             if (targetRow === 2) {
                 board[3][targetCol] = '0';
             } else {
