@@ -5,7 +5,6 @@ import logger from './utils/logger';
 const { service } = config;
 
 const main = async () => {
-
     const server = new Server(service.port);
 
     await server.start();

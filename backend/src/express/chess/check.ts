@@ -1,18 +1,19 @@
-import { getBishopMoves } from './bishop';
-import { getKnightMoves } from './knight';
-import { getPawnMoves } from './pawn';
-import { getQueenMoves } from './queen';
-import { getRookMoves } from './rook';
+import { getBishopMoves } from './pieces/bishop';
+import { getKnightMoves } from './pieces/knight';
+import { getPawnMoves } from './pieces/pawn';
+import { getQueenMoves } from './pieces/queen';
+import { getRookMoves } from './pieces/rook';
+import { Board, KING_BLACK, KING_WHITE, Turn, WHITE } from './types';
 import { convertTileToNumber, tileNumberToString } from './utils';
 
-export const checkCheck = (board, start, end, turn) => {
+export const checkCheck = (board: Board, start: string, end: string, turn: Turn) => {
     const boardCopy = JSON.parse(JSON.stringify(board));
     const newBoard = makeMove(boardCopy, start, end);
     return canCaptureKing(newBoard, turn);
 };
 
-const canCaptureKing = (board, turn) => {
-    const king = turn === 'w' ? 'K' : 'k';
+const canCaptureKing = (board: Board, turn: Turn) => {
+    const king = turn === WHITE ? KING_WHITE : KING_BLACK;
     const kingPos = getKingPosition(board, king);
 
     if (!kingPos) {
@@ -23,8 +24,8 @@ const canCaptureKing = (board, turn) => {
 
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
-            if (turn === 'w') {
-                if (board[i][j] === 'p' && getPawnMoves(board, i, j, 'b', '').includes(kingPos)) {
+            if (turn === WHITE) {
+                if (board[i][j] === 'p' && getPawnMoves(board, i, j, 'b').includes(kingPos)) {
                     flag = true;
                 }
                 if (board[i][j] === 'n' && getKnightMoves(board, i, j, 'b').includes(kingPos)) {
@@ -40,7 +41,7 @@ const canCaptureKing = (board, turn) => {
                     flag = true;
                 }
             } else {
-                if (board[i][j] === 'P' && getPawnMoves(board, i, j, 'w', '').includes(kingPos)) {
+                if (board[i][j] === 'P' && getPawnMoves(board, i, j, 'w').includes(kingPos)) {
                     flag = true;
                 }
                 if (board[i][j] === 'N' && getKnightMoves(board, i, j, 'w').includes(kingPos)) {
@@ -62,7 +63,7 @@ const canCaptureKing = (board, turn) => {
     return flag;
 };
 
-const getKingPosition = (board, king) => {
+const getKingPosition = (board: Board, king: typeof KING_WHITE | typeof KING_BLACK) => {
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
             if (board[i][j] === king) {
@@ -74,7 +75,7 @@ const getKingPosition = (board, king) => {
     return null;
 };
 
-const makeMove = (board, start, end) => {
+export const makeMove = (board: Board, start: string, end: string) => {
     if (start === 'castling') {
         makeCastlingMove(board, end);
         return board;
@@ -90,7 +91,7 @@ const makeMove = (board, start, end) => {
     return board;
 };
 
-const makeCastlingMove = (board, type) => {
+const makeCastlingMove = (board: Board, type: string) => {
     if (type === 'O-O') {
         board[7][4] = '0';
         board[7][6] = 'K';

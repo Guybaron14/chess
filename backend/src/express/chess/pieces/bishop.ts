@@ -1,4 +1,4 @@
-import { isCapturePossible, tileNumberToString } from './utils';
+import { isCapturePossible, tileNumberToString } from '../utils';
 
 const bishopCheck = (board: string[][], row: number, col: number, turn: string, legalMoves: string[]) => {
     if (board[row][col] === '0') {

@@ -1,4 +1,4 @@
-import { isCapturePossible, tileNumberToString } from './utils';
+import { isCapturePossible, tileNumberToString } from '../utils';
 
 const kingCheck = (board: string[][], row: number, col: number, turn: string, legalMoves: string[]) => {
     if (row > 7 || row < 0 || col > 7 || col < 0) {
