@@ -11,7 +11,7 @@ export const main = (board: Board, gameString: string) => {
         console.time('minimax');
         console.log('Calculating.....');
 
-        const res = minimax(board, 6, false, -Infinity, Infinity, 6, '', undefined);
+        const res = minimax(board, 5, false, -Infinity, Infinity, 5, '', undefined);
         console.log(res);
         console.timeEnd('minimax');
 

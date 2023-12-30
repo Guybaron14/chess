@@ -116,7 +116,14 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
 
         if (makeEnPassant(tempBoard, tile, target)) return;
 
-        tempBoard[targetRow][targetCol] = tempBoard[tileRow][tileCol];
+        if (tempBoard[tileRow][tileCol] === 'p' && targetRow === 7) {
+            tempBoard[targetRow][targetCol] = 'q';
+        } else if (tempBoard[tileRow][tileCol] === 'P' && targetRow === 0) {
+            tempBoard[targetRow][targetCol] = 'Q';
+        } else {
+            tempBoard[targetRow][targetCol] = tempBoard[tileRow][tileCol];
+        }
+
         tempBoard[tileRow][tileCol] = '0';
 
         checkPossibleEnPassant(tile, target);

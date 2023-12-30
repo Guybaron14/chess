@@ -1,6 +1,6 @@
 import { makeMove, undoMove } from '../check';
 import { getLegalMoves } from '../moves';
-import { Board, EMPTY } from '../types';
+import { Board } from '../types';
 import { evaluate } from './evaluate';
 
 let count = 0;
@@ -30,7 +30,7 @@ export const minimax = (
     for (const tile of legalMovesArr) {
         for (const move of legalMoves[tile]) {
             const { pieceEaten, didPromote } = makeMove(board, tile, move);
-            if (!(pieceEaten === EMPTY) && depth === 1) depth++;
+            if ((pieceEaten === 'Q' || pieceEaten === 'q') && depth === 1) depth++;
 
             count++;
             if (count % 1000000 === 0) console.log(`${count / 1000000} Million`);
