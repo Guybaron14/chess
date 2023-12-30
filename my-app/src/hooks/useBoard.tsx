@@ -18,7 +18,7 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
     const [currTurn, setCurrTurn] = useState<string>('w');
     const [enPassant, setEnPassant] = useState<string>('');
     const [castlingOptions, setCastlingOptions] = useState<string>('KQkq');
-    const [boardLegalMoves, setBoardLegalMoves] = useState<returnFromBackend>({});
+    const [boardLegalMoves, setBoardLegalMoves] = useState<returnFromBackend | { tile: string; move: string }>({});
 
     useEffect(() => {
         const fetchBoard = async () => {
@@ -32,19 +32,18 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
                 );
             }
         };
-
         fetchBoard();
     }, [board, currTurn]);
 
     useEffect(() => {
-        // if (Object.keys(boardLegalMoves).length === 0) {
-        //     if (currTurn === 'w') {
-        //          alert('Black Wins!');
-        //     } else {
-        //          alert('White Wins!');
-        //     }
-        // }
-    }, [boardLegalMoves]);
+        if (currTurn === 'b' && 'tile' in boardLegalMoves) {
+            makeMove(
+                convertTileToNumber(boardLegalMoves.tile as string),
+                convertTileToNumber(boardLegalMoves.move as string),
+            );
+            setCurrTurn('w');
+        }
+    }, [boardLegalMoves, currTurn]);
 
     const checkIfCurrTurn = (pieceString: string) => {
         if (currTurn === 'w') {
@@ -99,7 +98,7 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
         setCurrPiece(tile);
         for (const [pieceInLegalMoves, legalMoves] of Object.entries(boardLegalMoves)) {
             if (convertTileToNumber(pieceInLegalMoves) === Number(tile)) {
-                setBoard(markCastling(board, tile, boardLegalMoves));
+                setBoard(markCastling(board, tile, boardLegalMoves as returnFromBackend));
                 for (const move of legalMoves) {
                     const moveTile = convertTileToNumber(move);
                     tempBoard[Math.floor(moveTile / 8)][moveTile % 8] += '#';
@@ -110,7 +109,7 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
         setBoard(tempBoard);
     };
 
-    const makeMove = (tile: string, target: string) => {
+    const makeMove = (tile: any, target: any) => {
         const [tileRow, tileCol] = tileNumToRowCol(tile);
         const [targetRow, targetCol] = tileNumToRowCol(target);
         const tempBoard = [...board];

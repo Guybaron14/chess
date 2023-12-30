@@ -1,12 +1,13 @@
-import { BISHOP, BLACK, Board, KING, KNIGHT, PAWN, QUEEN, ROOK, WHITE } from '../types';
+import { BISHOP, BLACK, Board, EMPTY, KING, KNIGHT, PAWN, QUEEN, ROOK, WHITE } from '../types';
+import { squareTable } from './squareTable';
 
 const scoresMap = {
-    [PAWN]: 10,
-    [KNIGHT]: 30,
-    [BISHOP]: 30,
-    [ROOK]: 50,
-    [QUEEN]: 90,
-    [KING]: 900,
+    [PAWN]: 100,
+    [KNIGHT]: 320,
+    [BISHOP]: 330,
+    [ROOK]: 500,
+    [QUEEN]: 900,
+    [KING]: 20000,
 };
 
 export const evaluate = (board: Board) => {
@@ -15,9 +16,11 @@ export const evaluate = (board: Board) => {
         for (let j = 0; j < board.length; j++) {
             const color = board[i][j].toUpperCase() === board[i][j] ? WHITE : BLACK;
             const piece = board[i][j].toUpperCase();
-            const currentScore = scoresMap[piece] || 0;
 
-            score += color === WHITE ? currentScore : -currentScore;
+            const pieceScore = scoresMap[piece] || 0;
+            score += color === WHITE ? pieceScore : -pieceScore;
+
+            if (piece !== EMPTY) score += squareTable[piece][color][i][j] * (color === WHITE ? 1 : -1);
         }
     }
 

@@ -3,13 +3,25 @@ import { getKnightMoves } from './pieces/knight';
 import { getPawnMoves } from './pieces/pawn';
 import { getQueenMoves } from './pieces/queen';
 import { getRookMoves } from './pieces/rook';
-import { Board, KING_BLACK, KING_WHITE, Turn, WHITE } from './types';
+import {
+    Board,
+    KING_BLACK,
+    KING_WHITE,
+    PAWN_BLACK,
+    PAWN_WHITE,
+    Piece,
+    QUEEN_BLACK,
+    QUEEN_WHITE,
+    Turn,
+    WHITE,
+} from './types';
 import { convertTileToNumber, tileNumberToString } from './utils';
 
 export const checkCheck = (board: Board, start: string, end: string, turn: Turn) => {
-    const boardCopy = JSON.parse(JSON.stringify(board));
-    const newBoard = makeMove(boardCopy, start, end);
-    return canCaptureKing(newBoard, turn);
+    const { pieceEaten, didPromote } = makeMove(board, start, end);
+    const result = canCaptureKing(board, turn);
+    undoMove(board, start, end, pieceEaten, didPromote);
+    return result;
 };
 
 const canCaptureKing = (board: Board, turn: Turn) => {
@@ -75,18 +87,54 @@ const getKingPosition = (board: Board, king: typeof KING_WHITE | typeof KING_BLA
     return null;
 };
 
-export const makeMove = (board: Board, start: string, end: string) => {
+export const makeMove = (board: Board, start: string, end: string): { pieceEaten: Piece; didPromote: boolean } => {
     if (start === 'castling') {
         makeCastlingMove(board, end);
-        return board;
+        return { pieceEaten: '0', didPromote: false };
     }
 
     const startPos = convertTileToNumber(start);
     const endPos = convertTileToNumber(end);
 
-    const piece = board[Math.floor(startPos / 8)][startPos % 8];
-    board[Math.floor(startPos / 8)][startPos % 8] = '0';
-    board[Math.floor(endPos / 8)][endPos % 8] = piece;
+    const startRow = Math.floor(startPos / 8);
+    const startCol = startPos % 8;
+    const endRow = Math.floor(endPos / 8);
+    const endCol = endPos % 8;
+
+    const piece = board[startRow][startCol];
+    const pieceEaten = board[endRow][endCol];
+
+    board[startRow][startCol] = '0';
+
+    let didPromote = false;
+    if (piece === PAWN_WHITE && endRow === 0) {
+        board[endRow][endCol] = QUEEN_WHITE;
+        didPromote = true;
+    } else if (piece === 'p' && endRow === 7) {
+        board[endRow][endCol] = QUEEN_BLACK;
+        didPromote = true;
+    } else board[endRow][endCol] = piece;
+
+    return { pieceEaten, didPromote };
+};
+
+export const undoMove = (board: Board, start: string, end: string, pieceEaten: Piece, didPromote: boolean) => {
+    if (start === 'castling') return undoCastlingMove(board, end);
+
+    const startPos = convertTileToNumber(start);
+    const endPos = convertTileToNumber(end);
+
+    const startRow = Math.floor(startPos / 8);
+    const startCol = startPos % 8;
+    const endRow = Math.floor(endPos / 8);
+    const endCol = endPos % 8;
+
+    const piece = board[endRow][endCol];
+
+    if (didPromote) board[startRow][startCol] = piece === QUEEN_WHITE ? PAWN_WHITE : PAWN_BLACK;
+    else board[startRow][startCol] = piece;
+
+    board[endRow][endCol] = pieceEaten;
 
     return board;
 };
@@ -115,4 +163,28 @@ const makeCastlingMove = (board: Board, type: string) => {
     }
 
     return board;
+};
+
+const undoCastlingMove = (board: Board, type: string) => {
+    if (type === 'O-O') {
+        board[7][4] = 'K';
+        board[7][6] = '0';
+        board[7][5] = '0';
+        board[7][7] = 'R';
+    } else if (type === 'O-O-O') {
+        board[7][4] = 'K';
+        board[7][2] = '0';
+        board[7][3] = '0';
+        board[7][0] = 'R';
+    } else if (type === 'o-o') {
+        board[0][4] = 'k';
+        board[0][6] = '0';
+        board[0][5] = '0';
+        board[0][7] = 'r';
+    } else if (type === 'o-o-o') {
+        board[0][4] = 'k';
+        board[0][2] = '0';
+        board[0][3] = '0';
+        board[0][0] = 'r';
+    }
 };
