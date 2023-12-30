@@ -1,6 +1,6 @@
 import { makeMove, undoMove } from '../check';
 import { getLegalMoves } from '../moves';
-import { Board } from '../types';
+import { Board, QUEEN_BLACK, QUEEN_WHITE } from '../types';
 import { evaluate } from './evaluate';
 
 let count = 0;
@@ -30,7 +30,7 @@ export const minimax = (
     for (const tile of legalMovesArr) {
         for (const move of legalMoves[tile]) {
             const { pieceEaten, didPromote } = makeMove(board, tile, move);
-            if ((pieceEaten === 'Q' || pieceEaten === 'q') && depth === 1) depth++;
+            if ((pieceEaten === QUEEN_WHITE || pieceEaten === QUEEN_BLACK) && depth === 1) depth++;
 
             count++;
             if (count % 1000000 === 0) console.log(`${count / 1000000} Million`);
@@ -39,23 +39,23 @@ export const minimax = (
             undoMove(board, tile, move, pieceEaten, didPromote);
 
             if (maximizingPlayer) {
-                if (result.evaluation >= beta) return result;
+                if (result.evaluation >= beta) return { evaluation: result.evaluation, tile: tile, move: move };
                 if (alpha < result.evaluation) {
                     alpha = result.evaluation;
                     bestTile = tile;
                     bestMove = move;
-                    if (result.evaluation > 1300)
+                    if (result.evaluation > 9000)
                         return { evaluation: result.evaluation, tile: bestTile, move: bestMove };
                 }
             } else {
                 if (depth === maxDepth) console.log(result, tile, move);
 
-                if (result.evaluation <= alpha) return result;
+                if (result.evaluation <= alpha) return { evaluation: result.evaluation, tile: tile, move: move };
                 if (beta > result.evaluation) {
                     beta = result.evaluation;
                     bestTile = tile;
                     bestMove = move;
-                    if (result.evaluation < -1300)
+                    if (result.evaluation < -9000)
                         return { evaluation: result.evaluation, tile: bestTile, move: bestMove };
                 }
             }

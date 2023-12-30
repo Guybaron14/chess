@@ -135,8 +135,6 @@ export const undoMove = (board: Board, start: string, end: string, pieceEaten: P
     else board[startRow][startCol] = piece;
 
     board[endRow][endCol] = pieceEaten;
-
-    return board;
 };
 
 const makeCastlingMove = (board: Board, type: string) => {
