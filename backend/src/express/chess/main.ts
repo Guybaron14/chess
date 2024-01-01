@@ -3,7 +3,7 @@ import { minimax } from './bot/minimax';
 import { getLegalMoves } from './moves';
 import { evaluate } from './bot/evaluate';
 
-const DEPTH = 6;
+const DEPTH = 5;
 const GREEDINESS = 1000;
 
 export const main = (board: Board, gameString: string) => {
@@ -22,7 +22,7 @@ export const main = (board: Board, gameString: string) => {
 
         const currentEvaluation = evaluate(board);
 
-        const res = minimax(
+        let lastRes = minimax(
             board,
             DEPTH,
             false,
@@ -33,10 +33,33 @@ export const main = (board: Board, gameString: string) => {
             '',
             undefined,
         );
-        console.log(res);
+
+        let count = 0;
+        let lastTile = lastRes.tile;
+        let lastMove = lastRes.move;
+
+        while (lastRes.evaluation === -Infinity) {
+            count++;
+            lastTile = lastRes.tile;
+            lastMove = lastRes.move;
+
+            lastRes = minimax(
+                board,
+                DEPTH - count,
+                false,
+                -Infinity,
+                Infinity,
+                DEPTH - count,
+                Math.abs(currentEvaluation) + GREEDINESS,
+                '',
+                undefined,
+            );
+        }
+
+        console.log({ move: lastMove, tile: lastTile });
         console.timeEnd('minimax');
 
-        return { move: res.move, tile: res.tile };
+        return { move: lastMove, tile: lastTile };
     }
 
     return legalMoves2;

@@ -5,17 +5,8 @@ import { ServerError } from './error';
 
 const appRouter = Router();
 
-let lock = false;
-
 appRouter.post('/api/:gameString', (req, res) => {
-    if (lock) {
-        res.status(StatusCodes.UNAVAILABLE_FOR_LEGAL_REASONS).send('busy');
-        return;
-    }
-
-    lock = true;
     res.send(main(req.body.board, req.params.gameString));
-    lock = false;
 });
 
 appRouter.use('/isAlive', (_req, res) => {
