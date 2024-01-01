@@ -1,23 +1,23 @@
-import { BLACK, EMPTY, WHITE } from '../types';
+import { BLACK, Board, EMPTY, Move, WHITE } from '../types';
 import { isCapturePossible, tileNumberToString } from '../utils';
 
-const rookCheck = (board: string[][], row: number, col: number, turn: string, legalMoves: string[]) => {
+const rookCheck = (board: string[][], row: number, col: number, turn: string, legalMoves: Move[]) => {
     if (board[row][col] === EMPTY) {
-        legalMoves.push(tileNumberToString(row, col));
+        legalMoves.push({ move: tileNumberToString(row, col), score: 0 });
         return false;
     } else if (
         (turn === WHITE && isCapturePossible(board, row, col, WHITE)) ||
         (turn === BLACK && isCapturePossible(board, row, col, BLACK))
     ) {
-        legalMoves.push(tileNumberToString(row, col));
+        legalMoves.push({ move: tileNumberToString(row, col), score: 1 });
         return true;
     }
 
     return true;
 };
 
-export const getRookMoves = (board: Array<Array<string>>, row: number, col: number, turn: string): Array<string> => {
-    const legalMoves: Array<string> = [];
+export const getRookMoves = (board: Board, row: number, col: number, turn: string) => {
+    const legalMoves: Move[] = [];
 
     for (let index = row + 1; index < 8; index++) {
         if (rookCheck(board, index, col, turn, legalMoves)) break;

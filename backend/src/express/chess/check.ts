@@ -37,35 +37,35 @@ const canCaptureKing = (board: Board, turn: Turn) => {
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board[i].length; j++) {
             if (turn === WHITE) {
-                if (board[i][j] === 'p' && getPawnMoves(board, i, j, 'b').includes(kingPos)) {
+                if (board[i][j] === 'p' && getPawnMoves(board, i, j, 'b').some(({ move }) => move === kingPos)) {
                     flag = true;
                 }
-                if (board[i][j] === 'n' && getKnightMoves(board, i, j, 'b').includes(kingPos)) {
+                if (board[i][j] === 'n' && getKnightMoves(board, i, j, 'b').some(({ move }) => move === kingPos)) {
                     flag = true;
                 }
-                if (board[i][j] === 'b' && getBishopMoves(board, i, j, 'b').includes(kingPos)) {
+                if (board[i][j] === 'b' && getBishopMoves(board, i, j, 'b').some(({ move }) => move === kingPos)) {
                     flag = true;
                 }
-                if (board[i][j] === 'r' && getRookMoves(board, i, j, 'b').includes(kingPos)) {
+                if (board[i][j] === 'r' && getRookMoves(board, i, j, 'b').some(({ move }) => move === kingPos)) {
                     flag = true;
                 }
-                if (board[i][j] === 'q' && getQueenMoves(board, i, j, 'b').includes(kingPos)) {
+                if (board[i][j] === 'q' && getQueenMoves(board, i, j, 'b').some(({ move }) => move === kingPos)) {
                     flag = true;
                 }
             } else {
-                if (board[i][j] === 'P' && getPawnMoves(board, i, j, 'w').includes(kingPos)) {
+                if (board[i][j] === 'P' && getPawnMoves(board, i, j, 'w').some(({ move }) => move === kingPos)) {
                     flag = true;
                 }
-                if (board[i][j] === 'N' && getKnightMoves(board, i, j, 'w').includes(kingPos)) {
+                if (board[i][j] === 'N' && getKnightMoves(board, i, j, 'w').some(({ move }) => move === kingPos)) {
                     flag = true;
                 }
-                if (board[i][j] === 'B' && getBishopMoves(board, i, j, 'w').includes(kingPos)) {
+                if (board[i][j] === 'B' && getBishopMoves(board, i, j, 'w').some(({ move }) => move === kingPos)) {
                     flag = true;
                 }
-                if (board[i][j] === 'R' && getRookMoves(board, i, j, 'w').includes(kingPos)) {
+                if (board[i][j] === 'R' && getRookMoves(board, i, j, 'w').some(({ move }) => move === kingPos)) {
                     flag = true;
                 }
-                if (board[i][j] === 'Q' && getQueenMoves(board, i, j, 'w').includes(kingPos)) {
+                if (board[i][j] === 'Q' && getQueenMoves(board, i, j, 'w').some(({ move }) => move === kingPos)) {
                     flag = true;
                 }
             }

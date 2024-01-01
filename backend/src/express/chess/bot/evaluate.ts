@@ -1,4 +1,4 @@
-import { BISHOP, BLACK, Board, EMPTY, KING, KNIGHT, PAWN, QUEEN, ROOK, WHITE } from '../types';
+import { BISHOP, BLACK, Board, KING, KNIGHT, PAWN, QUEEN, ROOK, WHITE } from '../types';
 import { squareTable } from './squareTable';
 
 const scoresMap = {
@@ -12,16 +12,30 @@ const scoresMap = {
 
 export const evaluate = (board: Board) => {
     let score = 0;
+    let pieceCount = 0;
+
     for (let i = 0; i < board.length; i++) {
         for (let j = 0; j < board.length; j++) {
             const color = board[i][j].toUpperCase() === board[i][j] ? WHITE : BLACK;
             const piece = board[i][j].toUpperCase();
 
             const pieceScore = scoresMap[piece] || 0;
+            if (pieceScore) pieceCount++;
             score += color === WHITE ? pieceScore : -pieceScore;
 
-            if (piece !== EMPTY) score += squareTable[piece][color][i][j] * (color === WHITE ? 1 : -1);
+            if (pieceScore) score += squareTable[piece][color][i][j] * (color === WHITE ? 1 : -1);
         }
+    }
+
+    if (pieceCount <= 12) {
+        const kingPosition = board.flat().findIndex((piece) => piece === KING);
+        const kingRow = Math.floor(kingPosition / 8);
+        const kingCol = kingPosition % 8;
+        const color = board[kingRow][kingCol].toUpperCase() === board[kingRow][kingCol] ? WHITE : BLACK;
+
+        const kingScore = squareTable[KING + 'ENDGAME'][color][kingRow][kingCol] * (color === WHITE ? 1 : -1);
+
+        score += kingScore * (12 - pieceCount) < 4 ? 1 : 2;
     }
 
     return score;

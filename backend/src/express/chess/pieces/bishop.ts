@@ -1,13 +1,14 @@
+import { Board, Move } from '../types';
 import { isCapturePossible, tileNumberToString } from '../utils';
 
-const bishopCheck = (board: string[][], row: number, col: number, turn: string, legalMoves: string[]) => {
+const bishopCheck = (board: string[][], row: number, col: number, turn: string, legalMoves: Move[]) => {
     if (board[row][col] === '0') {
-        legalMoves.push(tileNumberToString(row, col));
+        legalMoves.push({ move: tileNumberToString(row, col), score: 0 });
     } else if (
         (turn === 'w' && isCapturePossible(board, row, col, 'w')) ||
         (turn === 'b' && isCapturePossible(board, row, col, 'b'))
     ) {
-        legalMoves.push(tileNumberToString(row, col));
+        legalMoves.push({ move: tileNumberToString(row, col), score: 1 });
         return true;
     } else {
         return true;
@@ -16,8 +17,8 @@ const bishopCheck = (board: string[][], row: number, col: number, turn: string, 
     return false;
 };
 
-export const getBishopMoves = (board: Array<Array<string>>, row: number, col: number, turn: string): Array<string> => {
-    const legalMoves: Array<string> = [];
+export const getBishopMoves = (board: Board, row: number, col: number, turn: string) => {
+    const legalMoves: Move[] = [];
 
     let i = row + 1;
     let j = col + 1;

@@ -1,7 +1,7 @@
-import { KING_BLACK, KING_WHITE, QUEEN_BLACK, QUEEN_WHITE, ROOK_BLACK, ROOK_WHITE, WHITE } from './types';
+import { KING_BLACK, KING_WHITE, Move, QUEEN_BLACK, QUEEN_WHITE, ROOK_BLACK, ROOK_WHITE, WHITE } from './types';
 
 export const getCastlingMoves = (board: string[][], castling: string, turn: string) => {
-    const legalMoves: string[] = [];
+    const legalMoves: Move[] = [];
 
     if (turn === WHITE) {
         if (castling.includes(KING_WHITE)) {
@@ -11,7 +11,7 @@ export const getCastlingMoves = (board: string[][], castling: string, turn: stri
                 board[7][7] === ROOK_WHITE &&
                 board[7][4] === KING_WHITE
             ) {
-                legalMoves.push('O-O');
+                legalMoves.push({ move: 'O-O', score: 0.5 });
             }
         }
         if (castling.includes(QUEEN_WHITE)) {
@@ -22,7 +22,7 @@ export const getCastlingMoves = (board: string[][], castling: string, turn: stri
                 board[7][0] === ROOK_WHITE &&
                 board[7][4] === KING_WHITE
             ) {
-                legalMoves.push('O-O-O');
+                legalMoves.push({ move: 'O-O-O', score: 0.5 });
             }
         }
     } else {
@@ -33,7 +33,7 @@ export const getCastlingMoves = (board: string[][], castling: string, turn: stri
                 board[0][7] === ROOK_BLACK &&
                 board[0][4] === KING_BLACK
             ) {
-                legalMoves.push('O-O');
+                legalMoves.push({ move: 'o-o', score: 0.5 });
             }
         }
         if (castling.includes(QUEEN_BLACK)) {
@@ -44,7 +44,7 @@ export const getCastlingMoves = (board: string[][], castling: string, turn: stri
                 board[0][0] === ROOK_BLACK &&
                 board[0][4] === KING_BLACK
             ) {
-                legalMoves.push('O-O-O');
+                legalMoves.push({ move: 'o-o-o', score: 0.5 });
             }
         }
     }

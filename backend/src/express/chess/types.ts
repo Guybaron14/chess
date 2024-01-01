@@ -27,3 +27,4 @@ export const KING_BLACK = 'k';
 export type Piece = 'p' | 'r' | 'n' | 'b' | 'q' | 'k' | 'P' | 'R' | 'N' | 'B' | 'Q' | 'K' | '0';
 export type Turn = 'w' | 'b';
 export type Board = Piece[][];
+export type Move = { move: string; score: number };

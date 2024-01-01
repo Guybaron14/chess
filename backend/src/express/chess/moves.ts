@@ -6,7 +6,7 @@ import { getKnightMoves } from './pieces/knight';
 import { getPawnMoves } from './pieces/pawn';
 import { getQueenMoves } from './pieces/queen';
 import { getRookMoves } from './pieces/rook';
-import { PAWN, ROOK, BISHOP, QUEEN, KNIGHT, KING, Board, Turn, EMPTY, WHITE, BLACK } from './types';
+import { PAWN, ROOK, BISHOP, QUEEN, KNIGHT, KING, Board, Turn, EMPTY, WHITE, BLACK, Move } from './types';
 import { tileNumberToString } from './utils';
 
 const movesMap = {
@@ -18,8 +18,13 @@ const movesMap = {
     [KING]: getKingMoves,
 };
 
-export const getLegalMoves = (board: Board, turn: Turn, casteling: string, enPassant?: string) => {
-    const legalMoves = {};
+export const getLegalMoves = (
+    board: Board,
+    turn: Turn,
+    casteling: string,
+    enPassant?: string,
+): Record<string, Move[]> => {
+    const legalMoves: Record<string, Move[]> = {};
     legalMoves['castling'] = getCastlingMoves(board, casteling, turn);
 
     for (let i = 0; i < board.length; i++) {
@@ -41,7 +46,7 @@ export const getLegalMoves = (board: Board, turn: Turn, casteling: string, enPas
 
     for (let key in legalMoves) {
         for (let i = 0; i < legalMoves[key].length; i++) {
-            if (checkCheck(board, key, legalMoves[key][i], turn as Turn)) {
+            if (checkCheck(board, key, legalMoves[key][i].move, turn as Turn)) {
                 legalMoves[key].splice(i, 1);
                 i--;
             }
