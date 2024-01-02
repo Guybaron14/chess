@@ -37,6 +37,11 @@ export const checkCastling = (board: string[][], tile: string, currPiece: string
     let newBoard = [...board];
     let newCastlingOptions = castlingOptions;
 
+    console.log(tile, currPiece, castlingOptions);
+
+    currPiece = currPiece.includes('O') ? '60' : currPiece.includes('o') ? '4' : currPiece;
+    tile = tile === 'O-O-O' ? '62' : tile === 'O-O' ? '58' : tile === 'o-o-o' ? '2' : tile === 'o-o' ? '6' : tile;
+
     if (currPiece === '60') {
         if (tile === '62') {
             const { tempBoard, newCastlingOptionsReturn } = makeCastling(board, 'K', castlingOptions);
@@ -66,7 +71,7 @@ export const checkCastling = (board: string[][], tile: string, currPiece: string
             newCastlingOptions = castlingOptions.replace('k', '').replace('q', '');
         }
     }
-    return {newBoard, newCastlingOptions, isCastlingDone};
+    return { newBoard, newCastlingOptions, isCastlingDone };
 };
 
 const makeCastling = (board: string[][], castlingType: string, castlingOptions: string) => {

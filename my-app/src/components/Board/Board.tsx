@@ -16,7 +16,7 @@ import whiteKing from '../../images/whiteKing.png';
 import { useBoard } from '../../hooks/useBoard';
 
 const Board: React.FC<{}> = () => {
-    const [twoDBoard, pieceSelected] = useBoard();
+    const [twoDBoard, pieceSelected, isBotLoading] = useBoard();
 
     const determineColor = (currBoardLength: number) => {
         if (Math.floor(currBoardLength / 8) % 2) {
@@ -73,7 +73,11 @@ const Board: React.FC<{}> = () => {
         }
     }
 
-    return <div className="board">{board}</div>;
+    return (
+        <div className="board">
+            {board} {isBotLoading && <h3 style={{ color: 'white' }}>Bot is thinking...</h3>}
+        </div>
+    );
 };
 
 export default Board;

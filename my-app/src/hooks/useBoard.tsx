@@ -3,7 +3,7 @@ import { convertTileToNumber, tileNumberToString, tileNumToRowCol } from '../uti
 import axios from 'axios';
 import { checkCastling, markCastling, returnFromBackend } from '../utils/castling';
 
-export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
+export const useBoard = (): [Array<Array<string>>, (tile: string) => void, boolean] => {
     const [board, setBoard] = useState<Array<Array<string>>>([
         ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
         ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
@@ -14,6 +14,7 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
         ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
         ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'],
     ]);
+    const [isBotLoading, setIsBotLoading] = useState<boolean>(false);
     const [currPiece, setCurrPiece] = useState<string>('');
     const [currTurn, setCurrTurn] = useState<string>('w');
     const [enPassant, setEnPassant] = useState<string>('');
@@ -23,12 +24,14 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
     useEffect(() => {
         const fetchBoard = async () => {
             if (!board.some((row: any[]) => row.some((tile: string) => tile.includes('#')))) {
+                if (currTurn === 'b') setIsBotLoading(true);
                 const moves = (
                     await axios.post(`http://localhost:8080/api/${currTurn}-${castlingOptions}-${enPassant}-0`, {
                         board: board,
                     })
                 ).data;
 
+                setIsBotLoading(false);
                 setBoardLegalMoves(moves);
             }
         };
@@ -37,10 +40,20 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
 
     useEffect(() => {
         if (currTurn === 'b' && 'tile' in boardLegalMoves) {
-            makeMove(
-                convertTileToNumber(boardLegalMoves.tile as string),
-                convertTileToNumber(boardLegalMoves.move as string),
+            const { newBoard, newCastlingOptions, isCastlingDone } = checkCastling(
+                board,
+                boardLegalMoves.move as string,
+                boardLegalMoves.move as string,
+                castlingOptions,
             );
+            setBoard(newBoard);
+            setCastlingOptions(newCastlingOptions);
+
+            if (!isCastlingDone)
+                makeMove(
+                    convertTileToNumber(boardLegalMoves.tile as string),
+                    convertTileToNumber(boardLegalMoves.move as string),
+                );
             setCurrTurn('w');
         }
     }, [boardLegalMoves, currTurn]);
@@ -180,5 +193,5 @@ export const useBoard = (): [Array<Array<string>>, (tile: string) => void] => {
         }
     };
 
-    return [board, pieceSelected];
+    return [board, pieceSelected, isBotLoading];
 };
