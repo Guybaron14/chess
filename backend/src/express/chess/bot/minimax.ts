@@ -1,6 +1,7 @@
 import { makeMove, undoMove } from '../check';
 import { getLegalMoves } from '../moves';
-import { BLACK, Board, Move, WHITE } from '../types';
+import { BLACK, Board, KING_BLACK, KING_WHITE, Move, WHITE } from '../types';
+import { tileNumberToString } from '../utils';
 import { evaluate } from './evaluate';
 
 let count = 0;
@@ -28,6 +29,19 @@ export const minimax = (
         legalMovesArr = legalMovesArr.concat(legalMoves[keys[i]].map((move) => ({ ...move, tile: keys[i] })));
 
     legalMovesArr.sort((a, b) => b.score - a.score);
+
+    if (!legalMovesArr.length) {
+        const kingNumberPosition = board
+            .flat()
+            .findIndex((piece) => piece === (maximizingPlayer ? KING_WHITE : KING_BLACK));
+        const kingPosition = tileNumberToString(Math.floor(kingNumberPosition / 8), kingNumberPosition % 8);
+
+        const otherPlayerLegalMoves = getLegalMoves(board, maximizingPlayer ? BLACK : WHITE, casteling, enPassant);
+
+        if (!Object.values(otherPlayerLegalMoves).some((moves) => moves.some(({ move }) => move === kingPosition))) {
+            return { evaluation: 0, tile: null, move: null };
+        }
+    }
 
     let bestTile: string | null = null;
     let bestMove: string | null = null;

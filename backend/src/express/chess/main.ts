@@ -10,7 +10,7 @@ const GREEDINESS = 1000;
 export const main = (board: Board, gameString: string) => {
     const [turn, casteling, _enPassant, _moveCounter] = gameString.split('-');
 
-    const legalMoves = getLegalMoves(board, turn as Turn, casteling, _enPassant );
+    const legalMoves = getLegalMoves(board, turn as Turn, casteling, _enPassant);
     const legalMoves2 = {};
 
     for (const move of Object.keys(legalMoves)) {
