@@ -2,14 +2,15 @@ import { BLACK, Board, Turn } from './types';
 import { minimax } from './bot/minimax';
 import { getLegalMoves } from './moves';
 import { evaluate } from './bot/evaluate';
+import { handleOpening } from './openings';
 
-const DEPTH = 5;
+const DEPTH = 6;
 const GREEDINESS = 1000;
 
 export const main = (board: Board, gameString: string) => {
     const [turn, casteling, _enPassant, _moveCounter] = gameString.split('-');
 
-    const legalMoves = getLegalMoves(board, turn as Turn, casteling);
+    const legalMoves = getLegalMoves(board, turn as Turn, casteling, _enPassant );
     const legalMoves2 = {};
 
     for (const move of Object.keys(legalMoves)) {
@@ -17,6 +18,9 @@ export const main = (board: Board, gameString: string) => {
     }
 
     if (turn === BLACK) {
+        const opening = handleOpening(board);
+        if (opening) return opening;
+
         console.time('minimax');
         console.log('Calculating.....');
 
@@ -30,7 +34,7 @@ export const main = (board: Board, gameString: string) => {
             Infinity,
             DEPTH,
             Math.abs(currentEvaluation) + GREEDINESS,
-            '',
+            casteling,
             undefined,
         );
 

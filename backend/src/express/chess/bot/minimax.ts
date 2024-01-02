@@ -5,8 +5,6 @@ import { evaluate } from './evaluate';
 
 let count = 0;
 
-// const cache = {};
-
 export const minimax = (
     board: Board,
     depth: number,
@@ -36,22 +34,10 @@ export const minimax = (
 
     for (const { tile, move } of legalMovesArr) {
         const { pieceEaten, didPromote } = makeMove(board, tile, move);
-        // if (
-        //     (pieceEaten === QUEEN_WHITE || pieceEaten === QUEEN_BLACK) &&
-        //     (piece === QUEEN_WHITE || piece === QUEEN_BLACK) &&
-        //     depth === 1
-        // )
-        //     depth++;
 
         count++;
         if (count % 1000000 === 0) console.log(`${count / 1000000} Million`);
 
-        // const boardString = board.join('');
-
-        // let result;
-        // if (cache[boardString] && depth !== maxDepth) {
-        //     result = cache[boardString];
-        // } else {
         const result = minimax(
             board,
             depth - 1,
@@ -63,8 +49,6 @@ export const minimax = (
             casteling,
             enPassant,
         );
-        //     cache[boardString] = result;
-        // }
 
         undoMove(board, tile, move, pieceEaten, didPromote);
 

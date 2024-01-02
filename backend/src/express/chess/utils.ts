@@ -1,6 +1,7 @@
 import {
     BISHOP_BLACK,
     BISHOP_WHITE,
+    Board,
     KING_BLACK,
     KING_WHITE,
     KNIGHT_BLACK,
@@ -18,7 +19,7 @@ export const tileNumberToString = (row: number, col: number): string => {
     return `${String.fromCharCode(col + 97)}${8 - row}`;
 };
 
-export const isCapturePossible = (board: Array<Array<string>>, row: number, col: number, turn: string): boolean => {
+export const isCapturePossible = (board: Board, row: number, col: number, turn: string) => {
     if (turn === WHITE) {
         if (
             board[row][col] === PAWN_BLACK ||
@@ -28,7 +29,7 @@ export const isCapturePossible = (board: Array<Array<string>>, row: number, col:
             board[row][col] === QUEEN_BLACK ||
             board[row][col] === KING_BLACK
         )
-            return true;
+            return board[row][col];
     } else {
         if (
             board[row][col] === PAWN_WHITE ||
@@ -38,7 +39,7 @@ export const isCapturePossible = (board: Array<Array<string>>, row: number, col:
             board[row][col] === QUEEN_WHITE ||
             board[row][col] === KING_WHITE
         )
-            return true;
+            return board[row][col];
     }
 
     return false;

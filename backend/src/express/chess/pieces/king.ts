@@ -1,21 +1,14 @@
-import { Board, Move } from '../types';
-import { isCapturePossible, tileNumberToString } from '../utils';
+import { checkMove } from '../moves';
+import { Board, KING, Move, Turn } from '../types';
 
-const kingCheck = (board: string[][], row: number, col: number, turn: string, legalMoves: Move[]) => {
+const kingCheck = (board: Board, row: number, col: number, turn: Turn, legalMoves: Move[]) => {
     if (row > 7 || row < 0 || col > 7 || col < 0) {
         return;
     }
-    if (board[row][col] === '0') {
-        legalMoves.push({ move: tileNumberToString(row, col), score: 0 });
-    } else if (
-        (turn === 'w' && isCapturePossible(board, row, col, 'w')) ||
-        (turn === 'b' && isCapturePossible(board, row, col, 'b'))
-    ) {
-        legalMoves.push({ move: tileNumberToString(row, col), score: 3 });
-    }
+    checkMove(board, legalMoves, row, col, turn, KING);
 };
 
-export const getKingMoves = (board: Board, row: number, col: number, turn: string) => {
+export const getKingMoves = (board: Board, row: number, col: number, turn: Turn) => {
     const legalMoves: Move[] = [];
 
     kingCheck(board, row + 1, col + 1, turn, legalMoves);

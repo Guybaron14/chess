@@ -1,3 +1,4 @@
+import { scoresMap } from './bot/evaluate';
 import { getCastlingMoves } from './castling';
 import { checkCheck } from './check';
 import { getBishopMoves } from './pieces/bishop';
@@ -6,8 +7,8 @@ import { getKnightMoves } from './pieces/knight';
 import { getPawnMoves } from './pieces/pawn';
 import { getQueenMoves } from './pieces/queen';
 import { getRookMoves } from './pieces/rook';
-import { PAWN, ROOK, BISHOP, QUEEN, KNIGHT, KING, Board, Turn, EMPTY, WHITE, BLACK, Move } from './types';
-import { tileNumberToString } from './utils';
+import { PAWN, ROOK, BISHOP, QUEEN, KNIGHT, KING, Board, Turn, EMPTY, WHITE, BLACK, Move, Piece } from './types';
+import { isCapturePossible, tileNumberToString } from './utils';
 
 const movesMap = {
     [PAWN]: getPawnMoves,
@@ -35,10 +36,11 @@ export const getLegalMoves = (
             if (turn === WHITE && piece !== piece.toUpperCase()) continue;
             if (turn === BLACK && piece !== piece.toLowerCase()) continue;
 
+            // bishop bug
             const possibleMoves =
                 piece.toUpperCase() === PAWN
                     ? getPawnMoves(board, i, j, turn, enPassant)
-                    : movesMap[piece.toUpperCase()](board, i, j, turn);
+                    : (movesMap[piece.toUpperCase()] || getBishopMoves)(board, i, j, turn);
 
             legalMoves[tileNumberToString(i, j)] = possibleMoves;
         }
@@ -54,4 +56,27 @@ export const getLegalMoves = (
     }
 
     return legalMoves;
+};
+
+export const checkMove = (board: Board, legalMoves: Move[], row: number, col: number, turn: Turn, piece: Piece) => {
+    if (board[row][col] === EMPTY) {
+        legalMoves.push({ move: tileNumberToString(row, col), score: 0 });
+        return false;
+    } else {
+        const capturedPiece = isCapturePossible(board, row, col, turn);
+        if (capturedPiece)
+            legalMoves.push({
+                move: tileNumberToString(row, col),
+                score:
+                    scoresMap[capturedPiece] > scoresMap[piece]
+                        ? 2
+                        : Math.abs(scoresMap[capturedPiece] - scoresMap[piece]) <= 10
+                        ? 1.5
+                        : scoresMap[piece] - scoresMap[capturedPiece] > 500
+                        ? -0.5
+                        : 1,
+            });
+    }
+
+    return true;
 };
